@@ -12,10 +12,16 @@
 html {
   background-color: #d1d1d1;
   scrollbar-color: #8f8f8f #d1d1d1;
+  /* The document ends exactly at the pinned scene, so scrolling past the end
+     would otherwise trigger the trackpad/macOS rubber-band bounce, which drags
+     the whole viewport and snaps it back. Disabling overscroll keeps the frame
+     perfectly still no matter how far past the end the user scrolls. */
+  overscroll-behavior-y: none;
 }
 
 body {
   overflow-x: clip;
+  overscroll-behavior-y: none;
 }
 
 ::selection {

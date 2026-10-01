@@ -110,8 +110,7 @@ export default function Scene() {
         );
 
         // The car is bound rigidly to scroll progress (scrub: true) so it can
-        // never lag behind or rubber-band against the viewport. It starts
-        // partially in frame on the left, exactly as in the reference.
+        // never lag behind or rubber-band against the viewport.
         const tween = gsap.fromTo(
           carEl,
           { x: () => -measurements.carW * 0.72 },
