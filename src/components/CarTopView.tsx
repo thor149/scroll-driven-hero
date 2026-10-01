@@ -16,19 +16,19 @@ export default function CarTopView({
     >
       <defs>
         <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#454a53" />
-          <stop offset="0.42" stopColor="#272a31" />
-          <stop offset="1" stopColor="#141519" />
+          <stop offset="0" stopColor="#ffa14a" />
+          <stop offset="0.38" stopColor="#f97b14" />
+          <stop offset="1" stopColor="#c14d05" />
         </linearGradient>
         <linearGradient id="carGlass" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#0b1014" />
-          <stop offset="0.5" stopColor="#243642" />
-          <stop offset="1" stopColor="#0b1014" />
+          <stop offset="0" stopColor="#0d1114" />
+          <stop offset="0.5" stopColor="#3a464f" />
+          <stop offset="1" stopColor="#0d1114" />
         </linearGradient>
         <linearGradient id="carRoof" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#3b3f46" />
-          <stop offset="0.5" stopColor="#202329" />
-          <stop offset="1" stopColor="#101114" />
+          <stop offset="0" stopColor="#4a4d52" />
+          <stop offset="0.5" stopColor="#23252a" />
+          <stop offset="1" stopColor="#111214" />
         </linearGradient>
         <filter id="carShadow" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="9" />
@@ -41,7 +41,7 @@ export default function CarTopView({
         rx="168"
         ry="74"
         fill="#000000"
-        opacity="0.45"
+        opacity="0.35"
         filter="url(#carShadow)"
       />
 
@@ -66,7 +66,7 @@ export default function CarTopView({
       <path
         d="M 372 90 C 372 64 352 44 316 36 C 282 28 230 24 176 24 C 122 24 84 30 64 42 C 46 53 36 70 36 90 C 36 110 46 127 64 138 C 84 150 122 156 176 156 C 230 156 282 152 316 144 C 352 136 372 116 372 90 Z"
         fill="url(#carBody)"
-        stroke="rgba(255,255,255,0.09)"
+        stroke="rgba(120,50,0,0.35)"
         strokeWidth="1.5"
       />
 
@@ -78,12 +78,12 @@ export default function CarTopView({
         height="104"
         rx="10"
         fill="url(#carRoof)"
-        stroke="rgba(255,255,255,0.07)"
+        stroke="rgba(255,255,255,0.08)"
         strokeWidth="1"
       />
 
-      <rect x="350" y="52" width="17" height="10" rx="5" fill="#eaffc4" opacity="0.92" />
-      <rect x="350" y="118" width="17" height="10" rx="5" fill="#eaffc4" opacity="0.92" />
+      <rect x="350" y="52" width="17" height="10" rx="5" fill="#f2f7ff" opacity="0.95" />
+      <rect x="350" y="118" width="17" height="10" rx="5" fill="#f2f7ff" opacity="0.95" />
 
       <rect x="34" y="52" width="12" height="13" rx="5" fill="#ff5f57" opacity="0.95" />
       <rect x="34" y="115" width="12" height="13" rx="5" fill="#ff5f57" opacity="0.95" />
@@ -94,8 +94,8 @@ export default function CarTopView({
         width="18"
         height="11"
         rx="5"
-        fill="#22252b"
-        stroke="rgba(255,255,255,0.10)"
+        fill="#141518"
+        stroke="rgba(255,255,255,0.12)"
         strokeWidth="1"
       />
       <rect
@@ -104,13 +104,13 @@ export default function CarTopView({
         width="18"
         height="11"
         rx="5"
-        fill="#22252b"
-        stroke="rgba(255,255,255,0.10)"
+        fill="#141518"
+        stroke="rgba(255,255,255,0.12)"
         strokeWidth="1"
       />
 
-      <path d="M 120 34 l 30 7 -3 9 -30 -6 Z" fill="#0f1013" opacity="0.85" />
-      <path d="M 120 146 l 30 -7 -3 -9 -30 6 Z" fill="#0f1013" opacity="0.85" />
+      <path d="M 120 34 l 30 7 -3 9 -30 -6 Z" fill="#0f1013" opacity="0.9" />
+      <path d="M 120 146 l 30 -7 -3 -9 -30 6 Z" fill="#0f1013" opacity="0.9" />
     </svg>
   );
 }

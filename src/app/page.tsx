@@ -1,13 +1,5 @@
-import Hero from "@/components/Hero";
-import DriveScene from "@/components/DriveScene";
-import Footer from "@/components/Footer";
+import Scene from "@/components/Scene";
 
 export default function Home() {
-  return (
-    <main>
-      <Hero />
-      <DriveScene />
-      <Footer />
-    </main>
-  );
+  return <Scene />;
 }

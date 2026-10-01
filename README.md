@@ -1,7 +1,7 @@
 # Scroll-Driven Hero — ITZ FIZZ
 
-A scroll-driven hero section animation inspired by the
-[car-scroll-animation reference](https://parasachaturvedi.github.io/car-scroll-animation),
+A recreation of the single-screen hero animation from
+[paraschaturvedi.github.io/car-scroll-animation](https://paraschaturvedi.github.io/car-scroll-animation),
 built with **Next.js**, **React**, **Tailwind CSS** and **GSAP ScrollTrigger**.
 
 - **Live demo:** https://thor149.github.io/scroll-driven-hero/
@@ -9,46 +9,55 @@ built with **Next.js**, **React**, **Tailwind CSS** and **GSAP ScrollTrigger**.
 
 ## Preview
 
-| Hero (on load) | Mid-drive (scroll) | Finale |
+| On load | Mid-scroll | End of scroll |
 | --- | --- | --- |
-| ![Hero section](docs/preview-hero.png) | ![Mid drive](docs/preview-drive.png) | ![Finale](docs/preview-finale.png) |
+| ![On load](docs/preview-hero.png) | ![Mid-scroll](docs/preview-drive.png) | ![End of scroll](docs/preview-finale.png) |
 
-## What it does
+Everything lives on **one screen**. The headline sits on the road band, the four stat
+boxes float above and below it, and the only thing that moves is the car — driving left
+to right, painting the green trail and flipping the headline letters to solid ink as it
+passes them.
 
-**1. Hero section (first screen, above the fold)**
+## Functional requirements
 
-- Letter-spaced headline — `W E L C O M E   I T Z   F I Z Z` — split into individual
-  letter elements.
-- Four impact metrics with percentages and short descriptions.
+**1. Hero section layout**
+
+- The hero occupies the first screen (above the fold), built on a `100svh` sticky stage.
+- Letter-spaced headline `W E L C O M E   I T Z F I Z Z`, split into per-letter elements.
+- Four impact metrics with percentages and short descriptions, placed around the band
+  (two above, two below) exactly as in the reference.
 
 **2. Initial load animation**
 
-- The eyebrow, headline letters and copy fade/slide in with a staggered timeline
-  (`power4.out`, letters rise out of a clipped mask).
-- Each statistic card animates in one-by-one with a subtle delay, and the numbers
-  count up to their final value.
+- The headline letters fade and rise out of a clipped mask, staggered left to right
+  (`power4.out`, 45 ms apart).
+- The four stat boxes slide up and fade in one-by-one with a subtle 180 ms delay between
+  them, so the load reads as premium rather than abrupt.
 
 **3. Scroll-based animation (core feature)**
 
-- The page pins (CSS `position: sticky`) into a drive scene and the car moves
-  left → right **purely as a function of scroll progress** — no autoplay, no timers.
-- A green trail grows behind the car, its leading edge locked to the car's position.
-- The wordmark `ITZ FIZZ` is painted letter-by-letter: each letter flips from a ghost
-  outline to solid ink the moment the car fully covers it (the reference's signature move).
-- Milestone stat cards pop in at scroll thresholds, a live progress rail and percentage
-  readout track the scene, and the car exits the frame as the trail completes.
+- The car's position is driven purely by scroll progress through a `ScrollTrigger`
+  with `scrub`, so it is tied to scroll and never autoplays.
+- `scrub: 0.5` interpolates between scroll positions, giving the motion an eased,
+  fluid feel instead of snapping to discrete scroll events.
+- The green trail is a full-width bar whose `scaleX` is locked to the car's leading edge.
+- Each headline letter flips from light gray to solid dark the moment the car covers it,
+  with a small `back.out` pop — the reference's signature move.
+- Each stat box gives a short scale pulse as the car drives beneath it.
 
 **4. Motion & performance**
 
-- Only `transform` and `opacity` are animated (`translate`, `scale`); the trail is a
-  `scaleX` on a full-width bar, so no layout is triggered while scrolling.
-- Scroll smoothing is delegated to GSAP's `scrub`, which interpolates the car between
-  scroll positions instead of snapping to each event.
-- Letter/wordmark positions are measured once (on mount, on resize, and once web fonts
-  are ready) and compared against precomputed pixel values inside the scroll callback —
-  no `getBoundingClientRect()` calls per frame.
-- `prefers-reduced-motion` is fully respected: animations are skipped and a static,
-  fully readable frame is shown instead.
+- Only `transform` and `opacity` are animated (`translate`, `scale`). The trail is a
+  `scaleX` on a full-width element, so scrolling triggers no layout or reflow.
+- The headline letters and stat boxes are measured **once** (on mount, on resize, and
+  again once web fonts resolve) and compared against precomputed pixel offsets inside the
+  scroll callback — no `getBoundingClientRect()` per frame.
+- State changes are guarded, so DOM writes only happen when a letter actually flips
+  rather than on every scroll tick.
+- Transient reads during a ScrollTrigger refresh are suppressed with a `refreshInit`
+  guard, so resizes can't produce a wrong intermediate frame.
+- `prefers-reduced-motion` is respected: the intro is skipped and a static, fully
+  readable frame is shown.
 
 ## Tech stack
 
@@ -58,6 +67,7 @@ built with **Next.js**, **React**, **Tailwind CSS** and **GSAP ScrollTrigger**.
 | UI | React 19 |
 | Styling | Tailwind CSS v4 |
 | Animation | GSAP 3 + ScrollTrigger (`@gsap/react`) |
+| Assets | Inline SVG (the car is drawn in code — no image requests) |
 | Hosting | GitHub Pages (GitHub Actions) |
 
 Bootstrap and WordPress were listed as optional extras; they were skipped in favour of a
@@ -82,27 +92,24 @@ npm run preview   # serves the exported site
 ```
 src/
 ├─ app/
-│  ├─ layout.tsx        # fonts (Inter + Space Grotesk), metadata
-│  ├─ page.tsx          # hero + drive scene + footer
-│  ├─ globals.css       # Tailwind theme, pre-animation states, reduced motion
+│  ├─ layout.tsx        # Inter font, metadata
+│  ├─ page.tsx          # renders the scene
+│  ├─ globals.css       # Tailwind theme, box placement, pre-animation states
 │  └─ icon.svg          # favicon
 ├─ components/
-│  ├─ Hero.tsx          # first screen: headline + stats intro timeline
-│  ├─ DriveScene.tsx    # pinned, scroll-driven scene (car, trail, wordmark, cards)
-│  ├─ CarTopView.tsx    # inline SVG car (no image assets)
-│  └─ Footer.tsx
+│  ├─ Scene.tsx         # the single screen: band, headline, car, stat boxes
+│  └─ CarTopView.tsx    # inline SVG top-view car
 ├─ data/
-│  ├─ stats.ts          # the four impact metrics
-│  └─ site.ts           # repository / live URLs
+│  └─ stats.ts          # the four metrics and their placement
 └─ lib/
    └─ gsap.ts           # single GSAP + ScrollTrigger registration point
 ```
 
 ## Deployment
 
-Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the static
-export (`output: "export"`) with `NEXT_PUBLIC_BASE_PATH` set to the repository name and
-publishes the `out/` directory to GitHub Pages.
+Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the static export
+(`output: "export"`) with `NEXT_PUBLIC_BASE_PATH` set to the repository name and publishes
+the `out/` directory to GitHub Pages.
 
 To deploy a fork, enable **Settings → Pages → Source: GitHub Actions** — no other change
 is required.
