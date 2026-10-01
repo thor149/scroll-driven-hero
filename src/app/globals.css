@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0a0a0b;
+  --color-lime: #45db7d;
+  --color-acid: #def54f;
+  --color-sky: #6ac9ff;
+  --color-ember: #fa7328;
+}
+
+html {
+  background-color: #0a0a0b;
+  scrollbar-color: #2a2a2e #0a0a0b;
+}
+
+body {
+  overflow-x: clip;
+}
+
+::selection {
+  background-color: #45db7d;
+  color: #0a0a0b;
+}
+
+/* ---------------------------------------------------------------------------
+   Pre-animation states.
+   Elements are hidden in CSS so there is no flash before GSAP takes over.
+   The reduced-motion query below reveals everything for users who opt out.
+--------------------------------------------------------------------------- */
+
+[data-anim="letter"] {
+  opacity: 0;
+  transform: translate3d(0, 115%, 0);
+}
+
+[data-anim="rise"] {
+  opacity: 0;
+  transform: translate3d(0, 1.4rem, 0);
+}
+
+[data-anim="fade"] {
+  opacity: 0;
+}
+
+[data-anim="card"] {
+  opacity: 0;
+  transform: translate3d(0, 1.6rem, 0) scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-anim] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero
+--------------------------------------------------------------------------- */
+
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black 20%, transparent 75%);
+}
+
+.hero-glow {
+  background: radial-gradient(ellipse 60% 45% at 50% 38%, rgba(69, 219, 125, 0.14), transparent 70%);
+}
+
+/* ---------------------------------------------------------------------------
+   Drive scene
+--------------------------------------------------------------------------- */
+
+.drive-stage {
+  --road-h: clamp(104px, 20vh, 208px);
+  --car-h: min(var(--road-h), 22vw);
+  --wordmark-size: min(calc(var(--road-h) * 0.7), 10.5vw);
+}
+
+.road {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 40%),
+    #17181c;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.road-lane {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.14) 0 44px,
+    rgba(255, 255, 255, 0) 44px 100px
+  );
+}
+
+.trail {
+  background: linear-gradient(90deg, #26b25e 0%, #45db7d 100%);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+
+.ghost-letter {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.22);
+  transition:
+    color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    -webkit-text-stroke-color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ghost-letter.is-painted {
+  color: #0a0a0b;
+  -webkit-text-stroke-color: rgba(10, 10, 11, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-letter {
+    color: rgba(255, 255, 255, 0.55);
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0);
+  }
+}
