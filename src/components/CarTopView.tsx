@@ -117,10 +117,10 @@ export default function CarTopView({
         <rect x="156" y="145" width="15" height="3" rx="1.5" />
       </g>
       <g stroke="#7e300a" strokeWidth="1">
-        <path d="M247 40 L239 26 Q239 21 245 20 L259 23 Q264 27 259 32 L252 42 Z" fill={paint("body")} />
-        <path d="M247 140 L239 154 Q239 159 245 160 L259 157 Q264 153 259 148 L252 138 Z" fill={paint("body")} />
+        <path d="M247 42 L241 34 Q240 30 245 29 L258 31 Q262 34 258 38 L252 43 Z" fill={paint("body")} />
+        <path d="M247 138 L241 146 Q240 150 245 151 L258 149 Q262 146 258 142 L252 137 Z" fill={paint("body")} />
       </g>
-      <path d="M240 25 L256 28 M240 155 L256 152" stroke="#141b20" strokeWidth="3" strokeLinecap="round" />
+      <path d="M243 33 L256 35 M243 147 L256 145" stroke="#141b20" strokeWidth="2.5" strokeLinecap="round" />
 
       {/* Hood creases and wheel-arch vents give the nose a clear direction. */}
       <path d="M267 53 Q309 43 346 59 Q357 90 346 121 Q309 137 267 127" fill="none" stroke="#b84a0c" strokeWidth="1.2" />
