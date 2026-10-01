@@ -45,6 +45,9 @@ bringing each stat box into view as it passes.
 - Each headline letter fades in as solid ink the moment the car's leading edge fully
   covers it — the reference's signature move.
 - Each stat box fades and slides in as the car reaches its column, and stays visible.
+- The car's stopping point is derived from the measured layout rather than a fixed
+  offset, so it always drives far enough for the final letter to clear the bodywork
+  while keeping most of the car on screen.
 
 **4. Motion & performance**
 
@@ -57,6 +60,8 @@ bringing each stat box into view as it passes.
   rather than on every scroll tick.
 - Transient reads during a ScrollTrigger refresh are suppressed with a `refreshInit`
   guard, so resizes can't produce a wrong intermediate frame.
+- `overscroll-behavior-y: none` stops the trackpad/macOS rubber-band bounce that would
+  otherwise drag the viewport when scrolling past the end of the pinned scene.
 - `prefers-reduced-motion` is respected: the intro is skipped and a static, fully
   readable frame is shown.
 
