@@ -33,6 +33,7 @@ export default function Scene() {
         bandW: 0,
         carW: 0,
         letterX: [] as number[],
+        letterRight: 0,
         boxX: [] as number[],
       };
       let refreshing = false;
@@ -45,10 +46,27 @@ export default function Scene() {
           const rect = el.getBoundingClientRect();
           return rect.left - bandRect.left + rect.width / 2;
         });
+        const lastLetter = letterEls[letterEls.length - 1];
+        measurements.letterRight = lastLetter
+          ? lastLetter.getBoundingClientRect().right - bandRect.left
+          : measurements.bandW * 0.7;
         measurements.boxX = boxEls.map((el) => {
           const rect = el.getBoundingClientRect();
           return rect.left - bandRect.left + rect.width / 2;
         });
+      };
+
+      // The car drives far enough that its front (left) edge clears the final
+      // letter, so the whole headline is revealed and is never left hidden
+      // underneath the car body, while still leaving a good part of the car
+      // visible on screen at the end of the scroll.
+      const endX = () => {
+        const clearance = measurements.carW * 0.06;
+        const pastLastLetter = measurements.letterRight + clearance;
+        return Math.min(
+          Math.max(pastLastLetter, measurements.bandW - measurements.carW),
+          measurements.bandW - measurements.carW * 0.22
+        );
       };
 
       const updateScene = (x: number) => {
@@ -115,7 +133,7 @@ export default function Scene() {
           carEl,
           { x: () => -measurements.carW * 0.72 },
           {
-            x: () => measurements.bandW - measurements.carW * 0.55,
+            x: () => endX(),
             ease: "none",
             onUpdate: () => {
               if (refreshing) return;
@@ -155,7 +173,7 @@ export default function Scene() {
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         measure();
-        gsap.set(carEl, { x: measurements.bandW - measurements.carW * 0.55 });
+        gsap.set(carEl, { x: endX() });
         setTrail(1);
         letterEls.forEach((el) => el.classList.add("is-painted"));
         gsap.set(boxEls, { autoAlpha: 1 });

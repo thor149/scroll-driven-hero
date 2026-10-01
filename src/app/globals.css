@@ -36,6 +36,8 @@ body {
 .scene {
   --band-h: clamp(84px, min(28vh, 32vw), 220px);
   --headline-size: min(7.4vw, calc(var(--band-h) * 0.55));
+  /* The car is drawn at its natural 400x180 ratio; the band height sets it. */
+  --car-h: var(--band-h);
 }
 
 .trail {
