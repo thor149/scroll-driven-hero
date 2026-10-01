@@ -15,8 +15,8 @@ built with **Next.js**, **React**, **Tailwind CSS** and **GSAP ScrollTrigger**.
 
 Everything lives on **one screen**. The headline sits on the road band, the four stat
 boxes float above and below it, and the only thing that moves is the car — driving left
-to right, painting the green trail and flipping the headline letters to solid ink as it
-passes them.
+to right, painting the green trail, revealing the headline letters one by one and
+bringing each stat box into view as it passes.
 
 ## Functional requirements
 
@@ -29,21 +29,22 @@ passes them.
 
 **2. Initial load animation**
 
-- The headline letters fade and rise out of a clipped mask, staggered left to right
-  (`power4.out`, 45 ms apart).
-- The four stat boxes slide up and fade in one-by-one with a subtle 180 ms delay between
-  them, so the load reads as premium rather than abrupt.
+- On load the page shows exactly what the reference does: the road band and the car,
+  with the headline letters and the stat boxes still hidden — they belong to the car.
+- The band and car fade up gently as the page settles, then everything else is driven
+  entirely by scroll.
 
 **3. Scroll-based animation (core feature)**
 
-- The car's position is driven purely by scroll progress through a `ScrollTrigger`
-  with `scrub`, so it is tied to scroll and never autoplays.
-- `scrub: 0.5` interpolates between scroll positions, giving the motion an eased,
-  fluid feel instead of snapping to discrete scroll events.
+- The car's position is driven purely by scroll progress through a `ScrollTrigger`,
+  so it is tied to scroll and never autoplays.
+- `scrub: true` binds the car rigidly to scroll position. There is no smoothing delay,
+  so the car can never drift behind the viewport or rubber-band back after the scroll
+  stops.
 - The green trail is a full-width bar whose `scaleX` is locked to the car's leading edge.
-- Each headline letter flips from light gray to solid dark the moment the car covers it,
-  with a small `back.out` pop — the reference's signature move.
-- Each stat box gives a short scale pulse as the car drives beneath it.
+- Each headline letter fades in as solid ink the moment the car's leading edge fully
+  covers it — the reference's signature move.
+- Each stat box fades and slides in as the car reaches its column, and stays visible.
 
 **4. Motion & performance**
 

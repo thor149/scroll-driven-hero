@@ -18,6 +18,7 @@ export default function Scene() {
     () => {
       const rootEl = root.current!;
       const screenEl = screen.current!;
+      const stageEl = rootEl.querySelector<HTMLElement>("[data-stage]")!;
       const bandEl = band.current!;
       const trailEl = trail.current!;
       const carEl = car.current!;
@@ -27,7 +28,7 @@ export default function Scene() {
       const setTrail = gsap.quickSetter(trailEl, "scaleX") as (value: number) => void;
 
       const painted = letterEls.map(() => false);
-      const boxArmed = boxEls.map(() => true);
+      const boxShown = boxEls.map(() => false);
       const measurements = {
         bandW: 0,
         carW: 0,
@@ -57,6 +58,7 @@ export default function Scene() {
         const carCenter = x + carW / 2;
         setTrail(gsap.utils.clamp(0, 1, carCenter / bandW));
 
+        // A letter flips to ink once the car's leading edge has fully covered it.
         letterEls.forEach((el, index) => {
           const threshold = letterX[index];
           const hit = painted[index]
@@ -66,36 +68,22 @@ export default function Scene() {
 
           painted[index] = hit;
           el.classList.toggle("is-painted", hit);
-
-          if (hit) {
-            gsap.fromTo(
-              el,
-              { scale: 0.86 },
-              { scale: 1, duration: 0.45, ease: "back.out(2.4)", overwrite: "auto" }
-            );
-          }
         });
 
+        // A stat box appears (and stays) once the car has reached its column.
         boxEls.forEach((el, index) => {
-          const near = Math.abs(carCenter - boxX[index]) < 16;
+          const reached = carCenter >= boxX[index];
+          if (reached === boxShown[index]) return;
 
-          if (near && boxArmed[index]) {
-            boxArmed[index] = false;
-            gsap.fromTo(
-              el,
-              { scale: 1 },
-              {
-                scale: 1.05,
-                duration: 0.16,
-                yoyo: true,
-                repeat: 1,
-                ease: "power2.out",
-                overwrite: "auto",
-              }
-            );
-          } else if (!near && !boxArmed[index]) {
-            boxArmed[index] = true;
-          }
+          boxShown[index] = reached;
+          gsap.to(el, {
+            autoAlpha: reached ? 1 : 0,
+            y: 0,
+            scale: 1,
+            duration: 0.45,
+            ease: "power3.out",
+            overwrite: "auto",
+          });
         });
       };
 
@@ -107,28 +95,26 @@ export default function Scene() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const q = gsap.utils.selector(screenEl);
-
         measure();
         ScrollTrigger.addEventListener("refreshInit", handleRefreshInit);
 
-        const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+        // Load reveal: the stage fades in gently. The headline letters and the
+        // stat boxes deliberately stay hidden here — they belong to the car,
+        // which paints them in as it drives (matching the reference). Only
+        // opacity on the container is animated, so it never competes with the
+        // car scroll tween below.
+        const intro = gsap.fromTo(
+          stageEl,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.8, ease: "power2.out" }
+        );
 
-        intro
-          .to(
-            q("[data-anim='letter']"),
-            { y: 0, autoAlpha: 1, duration: 0.9, ease: "power4.out", stagger: 0.045 },
-            0.15
-          )
-          .to(
-            q("[data-anim='box']"),
-            { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.18 },
-            0.7
-          );
-
+        // The car is bound rigidly to scroll progress (scrub: true) so it can
+        // never lag behind or rubber-band against the viewport. It starts
+        // partially in frame on the left, exactly as in the reference.
         const tween = gsap.fromTo(
           carEl,
-          { x: () => -measurements.carW },
+          { x: () => -measurements.carW * 0.72 },
           {
             x: () => measurements.bandW - measurements.carW * 0.55,
             ease: "none",
@@ -140,7 +126,7 @@ export default function Scene() {
               trigger: rootEl,
               start: "top top",
               end: "bottom bottom",
-              scrub: 0.5,
+              scrub: true,
               invalidateOnRefresh: true,
               onRefresh: () => {
                 refreshing = false;
@@ -173,6 +159,7 @@ export default function Scene() {
         gsap.set(carEl, { x: measurements.bandW - measurements.carW * 0.55 });
         setTrail(1);
         letterEls.forEach((el) => el.classList.add("is-painted"));
+        gsap.set(boxEls, { autoAlpha: 1 });
       });
 
       return () => mm.revert();
@@ -182,7 +169,7 @@ export default function Scene() {
 
   return (
     <div ref={root} className="scene relative h-[200vh]">
-      <div ref={screen} className="sticky top-0 h-svh overflow-hidden">
+      <div ref={screen} data-stage className="sticky top-0 h-svh overflow-hidden">
         <div
           ref={band}
           className="bg-road absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden"
@@ -229,7 +216,6 @@ export default function Scene() {
         {STATS.map((stat) => (
           <div
             key={stat.value}
-            data-anim="box"
             className="stat-box absolute"
             style={
               {

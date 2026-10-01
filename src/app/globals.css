@@ -39,18 +39,26 @@ body {
   will-change: transform;
 }
 
+/* ---------------------------------------------------------------------------
+   Headline.
+   Letters are invisible until the car has driven over them, exactly as in the
+   reference — then they fade to solid ink on the painted trail.
+--------------------------------------------------------------------------- */
+
 .headline-letter {
-  color: #d6d6d6;
-  transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  color: #111111;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
 }
 
 .headline-letter.is-painted {
-  color: #111111;
+  opacity: 1;
 }
 
 /* ---------------------------------------------------------------------------
-   Stat boxes — desktop uses the reference's staggered placement; small
-   screens fall back to a 2 x 2 grid that clears the road band.
+   Stat boxes — hidden until the car reaches them.
+   Desktop uses the reference's staggered placement; small screens fall back to
+   a 2 x 2 grid that clears the road band.
 --------------------------------------------------------------------------- */
 
 .stat-box {
@@ -59,6 +67,8 @@ body {
   width: var(--box-width);
   padding: 1.1vw 1.2vw;
   border-radius: clamp(10px, 1.4vw, 18px);
+  opacity: 0;
+  will-change: transform, opacity;
 }
 
 @media (max-width: 767px) {
@@ -72,28 +82,16 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Pre-animation states.
-   Elements are hidden in CSS so there is no flash before GSAP takes over.
-   The reduced-motion query below reveals everything for users who opt out.
+   Reduced motion: skip every animation and show the completed frame.
 --------------------------------------------------------------------------- */
 
-[data-anim="letter"] {
-  opacity: 0;
-  transform: translate3d(0, 115%, 0);
-}
-
-[data-anim="box"] {
-  opacity: 0;
-  transform: translate3d(0, 1.5rem, 0);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  [data-anim] {
+  .headline-letter {
     opacity: 1;
-    transform: none;
+    transition: none;
   }
 
-  .headline-letter {
-    transition: none;
+  .stat-box {
+    opacity: 1;
   }
 }
