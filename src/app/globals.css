@@ -2,104 +2,92 @@
 
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-
-  --color-canvas: #d1d1d1;
-  --color-graphite: #111111;
-  --color-road: #1e1e1e;
+  --color-canvas: #e9e9e3;
+  --color-graphite: #171b19;
+  --color-road: #1e2421;
   --color-trail: #45db7d;
 }
 
-html {
-  background-color: #d1d1d1;
-  scrollbar-color: #8f8f8f #d1d1d1;
-  /* The document ends exactly at the pinned scene, so scrolling past the end
-     would otherwise trigger the trackpad/macOS rubber-band bounce, which drags
-     the whole viewport and snaps it back. Disabling overscroll keeps the frame
-     perfectly still no matter how far past the end the user scrolls. */
-  overscroll-behavior-y: none;
-}
-
-body {
-  overflow-x: clip;
-  overscroll-behavior-y: none;
-}
-
-::selection {
-  background-color: #45db7d;
-  color: #111111;
-}
-
-/* ---------------------------------------------------------------------------
-   Scene sizing
---------------------------------------------------------------------------- */
-
-.scene {
-  --band-h: clamp(84px, min(28vh, 32vw), 220px);
-  --headline-size: min(7.4vw, calc(var(--band-h) * 0.55));
-  /* The car is drawn at its natural 400x180 ratio; the band height sets it. */
-  --car-h: var(--band-h);
-}
-
-.trail {
-  background-color: #45db7d;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  will-change: transform;
-}
-
-/* ---------------------------------------------------------------------------
-   Headline.
-   Letters are invisible until the car has driven over them, exactly as in the
-   reference — then they fade to solid ink on the painted trail.
---------------------------------------------------------------------------- */
-
-.headline-letter {
-  color: #111111;
-  opacity: 0;
-  transition: opacity 0.3s ease-out;
-}
-
-.headline-letter.is-painted {
-  opacity: 1;
-}
-
-/* ---------------------------------------------------------------------------
-   Stat boxes — hidden until the car reaches them.
-   Desktop uses the reference's staggered placement; small screens fall back to
-   a 2 x 2 grid that clears the road band.
---------------------------------------------------------------------------- */
-
-.stat-box {
-  top: var(--box-top);
-  left: var(--box-left);
-  width: var(--box-width);
-  padding: 1.1vw 1.2vw;
-  border-radius: clamp(10px, 1.4vw, 18px);
-  opacity: 0;
-  will-change: transform, opacity;
-}
+html { background: #e9e9e3; scrollbar-color: #8f958f #e9e9e3; overscroll-behavior-y: none; }
+body { overflow-x: clip; overscroll-behavior-y: none; }
+::selection { background: #45db7d; color: #111; }
+a, button { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible { outline: 2px solid #246c3b; outline-offset: 7px; border-radius: 3px; }
+.scene { --band-h: clamp(110px, min(25svh, 32vw), 220px); --headline-size: min(7.4vw, calc(var(--band-h) * 0.55)); }
+.stage { background: radial-gradient(ellipse at 30% 10%, #fafaf5 0%, transparent 65%), #e9e9e3; }
+.stage::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.27; background-image: linear-gradient(#9fa99f22 1px, transparent 1px), linear-gradient(90deg, #9fa99f22 1px, transparent 1px); background-size: 80px 80px; }
+.scene-header, .scene-footer { position: absolute; left: 5%; right: 5%; display: flex; align-items: center; justify-content: space-between; }
+.scene-header { top: max(28px, 5svh); }
+.wordmark { display: flex; align-items: center; font-size: 23px; letter-spacing: -1.3px; font-weight: 850; }
+.wordmark span { font-weight: 500; }
+.wordmark i { width: 8px; height: 8px; border-radius: 50%; background: #269448; margin: 5px 0 0 4px; }
+.header-note { font-size: 12px; color: #5c655e; }
+.scene-caption { position: absolute; top: 22%; left: 5%; }
+.eyebrow { font-size: 10px; font-weight: 650; letter-spacing: 0.18em; }
+.eyebrow > span { color: #6e7970; margin-right: 14px; }
+.scene-caption p { color: #5c655e; font-size: clamp(13px, 1.4vw, 18px); margin-top: 10px; }
+.road-band { top: 37%; height: var(--band-h); border-top: 1px solid #fff5; border-bottom: 1px solid #101e1580; box-shadow: 0 18px 28px -18px #16331d66, 0 2px 3px #0002; }
+.trail { background: #45db7d; transform: scaleX(0); transform-origin: 0 50%; will-change: transform; }
+.road-sheen { pointer-events: none; z-index: 1; background: linear-gradient(180deg, #ffffff12, transparent 35%, #00000013); border-top: 1px solid #ffffff12; }
+.headline { z-index: 2; padding-left: 5%; font-size: var(--headline-size); }
+.letter-slot { height: 1.08em; margin-right: 0.14em; }
+.headline-space { width: 0.55em; }
+.headline-letter { color: #e9ede8; transition: color 0.24s ease; }
+.headline-letter.is-painted { color: #132319; }
+.car { filter: drop-shadow(0 5px 4px #0005); }
+.metrics { position: absolute; top: 68%; left: 5%; right: 5%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); }
+.stat-box { perspective: 800px; }
+.stat-float { height: 100%; }
+.stat-surface { height: 100%; position: relative; min-height: 142px; padding: clamp(15px, 1.5vw, 24px); border: 1px solid #ffffff40; border-radius: 14px; background: var(--stat-accent); color: var(--stat-ink); box-shadow: 0 4px 0 -1px #172d1b17, 0 14px 24px -18px #172d1b80; transform-style: preserve-3d; }
+.stat-surface::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(135deg, #fff2, transparent 65%); }
+.stat-index { display: flex; justify-content: space-between; font-size: 10px; font-weight: 650; opacity: 0.65; }
+.stat-index > span { font-size: 15px; line-height: 1; }
+.stat-value { display: block; font-size: clamp(29px, 3.4vw, 54px); font-weight: 700; letter-spacing: -0.06em; line-height: 1.1; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.percent { font-size: 0.58em; margin-left: 3px; }
+.stat-label { display: block; font-size: clamp(11px, 0.95vw, 14px); line-height: 1.4; margin-top: 9px; max-width: 22ch; }
+.scene-footer { bottom: max(24px, 4svh); font-size: 11px; color: #566158; }
+.scroll-cue { display: flex; gap: 10px; align-items: center; }
+.scroll-cue > span { color: #172d1b; font-size: 19px; }
+.restart { cursor: pointer; padding: 8px 0; color: #263b2c; }
+.restart > span { margin-left: 12px; display: inline-block; transition: transform 0.2s; }
+.restart:hover > span { transform: translate(2px, -2px); }
+.progress-track { position: absolute; bottom: 0; width: 100%; height: 3px; background: #1c382b10; }
+.drive-progress { height: 100%; background: #258843; transform: scaleX(0); transform-origin: left; will-change: transform; }
 
 @media (max-width: 767px) {
-  .stat-box {
-    top: var(--box-top-sm);
-    left: var(--box-left-sm);
-    width: var(--box-width-sm);
-    padding: 12px 14px;
-    border-radius: 12px;
-  }
+  .scene { --band-h: clamp(92px, 28vw, 160px); }
+  .scene-header { top: max(24px, 4svh); }
+  .wordmark { font-size: 20px; }
+  .header-note { font-size: 10px; }
+  .scene-caption { top: 21%; }
+  .road-band { top: 34%; }
+  .metrics { top: 57%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .stat-surface { padding: 12px 14px; min-height: 122px; border-radius: 11px; }
+  .stat-value { font-size: 32px; margin-top: 3px; }
+  .stat-label { font-size: 11px; margin-top: 5px; }
+  .scene-footer { bottom: max(18px, 3svh); }
 }
-
-/* ---------------------------------------------------------------------------
-   Reduced motion: skip every animation and show the completed frame.
---------------------------------------------------------------------------- */
-
+@media (max-height: 700px) and (max-width: 767px) {
+  .scene-caption { top: 16%; }
+  .road-band { top: 27%; }
+  .metrics { top: 46%; gap: 8px; }
+  .stat-surface { min-height: 100px; padding: 9px 12px; }
+  .stat-index { font-size: 9px; }
+  .stat-value { font-size: 27px; }
+}
+@media (max-height: 580px) and (min-width: 768px) {
+  .scene { --band-h: min(24svh, 105px); }
+  .scene-caption { top: 18%; }
+  .road-band { top: 32%; }
+  .metrics { top: 60%; }
+  .stat-surface { min-height: 0; padding: 8px 12px; }
+  .stat-value { font-size: 24px; margin-top: 3px; }
+  .stat-label { font-size: 10px; margin-top: 5px; }
+  .stat-index { font-size: 9px; }
+  .scene-footer { bottom: 14px; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .headline-letter {
-    opacity: 1;
-    transition: none;
-  }
-
-  .stat-box {
-    opacity: 1;
-  }
+  .scene { height: 100svh; }
+  .headline-letter, .restart > span { transition: none; }
+  .scroll-cue { visibility: hidden; }
 }
